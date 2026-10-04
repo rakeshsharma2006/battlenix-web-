@@ -11,6 +11,15 @@
   --foreground: #f4f4f5;
   --muted: #a1a1aa;
   --subtle: #71717a;
+  --border-soft: rgba(255, 255, 255, 0.08);
+  --radius-card: 12px;
+  --radius-control: 10px;
+  --shadow-red: 0 12px 32px rgba(229, 72, 77, 0.16);
+  --shadow-blue: 0 12px 32px rgba(47, 107, 255, 0.18);
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration-fast: 150ms;
+  --duration-state: 300ms;
+  --duration-enter: 600ms;
 }
 
 @theme inline {
@@ -63,6 +72,421 @@ img {
   }
 }
 
+.atmosphere {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  isolation: isolate;
+}
+
+.atmosphere::before,
+.atmosphere::after {
+  position: absolute;
+  inset: -14%;
+  content: "";
+  pointer-events: none;
+}
+
+.atmosphere::before {
+  opacity: 0.07;
+  background: radial-gradient(ellipse at 25% 35%, rgba(229, 72, 77, 0.55), transparent 34%);
+}
+
+.atmosphere::after {
+  opacity: 0.045;
+  background-image:
+    radial-gradient(circle at 12% 24%, #e5484d 0 1px, transparent 1.5px),
+    radial-gradient(circle at 23% 72%, #e5484d 0 1px, transparent 1.5px),
+    radial-gradient(circle at 38% 42%, #e5484d 0 1px, transparent 1.5px),
+    radial-gradient(circle at 49% 82%, #e5484d 0 1px, transparent 1.5px),
+    radial-gradient(circle at 63% 26%, #e5484d 0 1px, transparent 1.5px),
+    radial-gradient(circle at 74% 61%, #e5484d 0 1px, transparent 1.5px),
+    radial-gradient(circle at 86% 34%, #e5484d 0 1px, transparent 1.5px),
+    radial-gradient(circle at 92% 78%, #e5484d 0 1px, transparent 1.5px),
+    radial-gradient(ellipse at center, transparent 45%, rgba(0, 0, 0, 0.5) 100%);
+}
+
+.atmosphere--hero::before {
+  opacity: 0.12;
+  animation: ambient-sweep 26s ease-in-out infinite alternate;
+}
+
+.atmosphere--cta::before {
+  opacity: 0.11;
+  background: radial-gradient(ellipse at 75% 50%, rgba(229, 72, 77, 0.5), transparent 40%);
+  animation: ambient-sweep 28s ease-in-out infinite alternate;
+}
+
+.atmosphere--legal::before,
+.atmosphere--legal::after {
+  opacity: 0.018;
+}
+
+.tournament-banner {
+  isolation: isolate;
+  background-color: #131316;
+}
+
+.tournament-banner::before,
+.tournament-banner::after {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  content: "";
+  pointer-events: none;
+}
+
+.tournament-banner::before {
+  z-index: 0;
+  opacity: 0.82;
+  transition: transform 500ms var(--ease-out);
+}
+
+.tournament-banner::after {
+  z-index: 1;
+  background: linear-gradient(180deg, transparent 18%, rgba(0, 0, 0, 0.72) 100%);
+}
+
+.tournament-banner--bgmi::before {
+  background-color: #17202a;
+  background-image:
+    radial-gradient(ellipse at 78% 24%, rgba(229, 72, 77, 0.22), transparent 36%),
+    repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.035) 0 1px, transparent 1px 18px);
+}
+
+.tournament-banner--freefire::before {
+  background-color: #241c15;
+  background-image:
+    radial-gradient(ellipse at 78% 24%, rgba(229, 72, 77, 0.2), transparent 36%),
+    repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.03) 0 1px, transparent 1px 20px);
+}
+
+.button-primary,
+.button-action,
+.button-outline {
+  transition: background-color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
+}
+
+.button-primary { box-shadow: 0 5px 18px rgba(229, 72, 77, 0.14); }
+.button-action { box-shadow: 0 5px 18px rgba(47, 107, 255, 0.14); }
+.button-icon,
+.play-icon { transition: transform var(--duration-fast) var(--ease-out); }
+
+@media (hover: hover) {
+  .button-primary:hover {
+    background-color: #d93e43;
+    box-shadow: var(--shadow-red);
+    transform: translateY(-1px);
+  }
+
+  .button-action:hover {
+    background-color: #245be0;
+    box-shadow: var(--shadow-blue);
+    transform: translateY(-1px);
+  }
+
+  .button-outline:hover {
+    border-color: #e5484d;
+    box-shadow: 0 4px 18px rgba(229, 72, 77, 0.12);
+    transform: translateY(-1px);
+  }
+
+  .button-link:hover .button-icon,
+  .button-link:hover .play-icon {
+    transform: translateY(-1px) scale(1.04);
+  }
+
+  .tournament-card:hover,
+  .tournament-card:focus-within {
+    transform: translateY(-4px);
+    border-color: rgba(229, 72, 77, 0.45);
+    box-shadow: var(--shadow-red);
+  }
+
+  .tournament-card:hover .tournament-banner::before,
+  .tournament-card:focus-within .tournament-banner::before {
+    transform: scale(1.03);
+  }
+
+  .card-cta:hover .card-cta-arrow,
+  .card-cta:focus-visible .card-cta-arrow {
+    transform: translateX(3px);
+  }
+
+  .feature-card:hover,
+  .feature-card:focus-within {
+    border-color: rgba(229, 72, 77, 0.45);
+    box-shadow: 0 6px 22px rgba(229, 72, 77, 0.1);
+  }
+
+  .feature-card:hover .feature-icon,
+  .feature-card:focus-within .feature-icon {
+    transform: rotate(2deg) scale(1.06);
+  }
+
+  .contact-card:hover,
+  .contact-card:focus-visible {
+    transform: translateY(-3px);
+    border-color: rgba(229, 72, 77, 0.42);
+    box-shadow: var(--shadow-red);
+  }
+
+  .contact-card:hover .contact-icon,
+  .contact-card:focus-visible .contact-icon {
+    transform: scale(1.05);
+  }
+  .footer-link:hover::after,
+  .footer-link:focus-visible::after {
+    transform: scaleX(1);
+  }
+  .social-link:hover,
+  .social-link:focus-visible {
+    transform: translateY(-2px);
+    border-color: rgba(229, 72, 77, 0.42);
+    box-shadow: 0 4px 16px rgba(229, 72, 77, 0.13);
+  }
+}
+
+.footer-polish::before {
+  position: absolute;
+  top: -1px;
+  left: max(1rem, calc((100vw - 80rem) / 2));
+  width: min(30vw, 16rem);
+  height: 1px;
+  content: "";
+  background: linear-gradient(90deg, rgba(229, 72, 77, 0.55), transparent);
+  pointer-events: none;
+}
+
+.footer-link::after {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 1px;
+  content: "";
+  background: #e5484d;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--duration-fast) var(--ease-out);
+}
+
+.social-link,
+.phone-shell,
+.tournament-card,
+.feature-card,
+.feature-icon,
+.contact-card,
+.contact-icon,
+.card-cta-arrow {
+  transition-property: opacity, transform, border-color, background-color, box-shadow;
+  transition-duration: var(--duration-fast);
+  transition-timing-function: var(--ease-out);
+}
+
+.live-dot {
+  transition: opacity var(--duration-fast) var(--ease-out), transform var(--duration-fast) var(--ease-out);
+}
+
+.tournament-card,
+.feature-card,
+.contact-card,
+.card-cta-arrow,
+.feature-icon,
+.contact-icon,
+.footer-link::after,
+.social-link,
+.button-icon,
+.play-icon {
+  transition-property: opacity, transform, border-color, background-color, box-shadow;
+  transition-duration: var(--duration-fast);
+  transition-timing-function: var(--ease-out);
+}
+
+.live-dot {
+  animation: live-pulse 2.6s ease-in-out infinite;
+}
+
+@keyframes live-pulse {
+  50% { opacity: 0.62; transform: scale(1.16); }
+}
+
+.timeline-horizontal,
+.timeline-vertical {
+  position: relative;
+}
+
+.timeline-horizontal::before,
+.timeline-vertical::before {
+  position: absolute;
+  z-index: 0;
+  content: "";
+  background: #26262c;
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+.timeline-horizontal::before {
+  display: none;
+  top: 1.35rem;
+  right: 0;
+  left: 0;
+  height: 1px;
+}
+
+.timeline-vertical::before {
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 1px;
+  transform: scaleY(0);
+  transform-origin: top;
+}
+
+.timeline[data-reveal-state="shown"]::before {
+  transform: scaleX(1);
+  transition: transform 700ms var(--ease-out) 120ms;
+}
+
+.timeline-vertical[data-reveal-state="shown"]::before { transform: scaleY(1); }
+
+.timeline-step {
+  position: relative;
+  z-index: 1;
+  opacity: 1;
+  transform: none;
+}
+
+.timeline[data-reveal-state="waiting"] .timeline-step {
+  opacity: 0;
+  transform: translateY(12px);
+}
+
+.timeline[data-reveal-state="shown"] .timeline-step {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 600ms var(--ease-out) var(--reveal-delay),
+    transform 600ms var(--ease-out) var(--reveal-delay);
+}
+
+.faq-row { border-left: 2px solid transparent; }
+.faq-answer-grid {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--duration-state) var(--ease-out);
+}
+.faq-row[open] { border-left-color: #e5484d; }
+.faq-row[open] .faq-answer-grid { grid-template-rows: 1fr; }
+.faq-answer-grid > div { overflow: hidden; }
+.faq-plus { transition: transform var(--duration-state) var(--ease-out); }
+.faq-row[open] .faq-plus { transform: rotate(45deg); }
+
+.legal-toc-link[aria-current="location"] {
+  border-left: 2px solid #e5484d;
+  background: #1a1a1f;
+  color: #f4f4f5;
+}
+
+.nav-header {
+  transition: background-color var(--duration-state) var(--ease-out), border-color var(--duration-state) var(--ease-out);
+}
+.nav-header[data-scrolled="true"] {
+  background-color: rgba(11, 11, 13, 0.94);
+  border-bottom-color: rgba(229, 72, 77, 0.22);
+  backdrop-filter: blur(8px);
+}
+
+.nav-link::after {
+  position: absolute;
+  right: 0.75rem;
+  bottom: 0.35rem;
+  left: 0.75rem;
+  height: 1px;
+  background: #e5484d;
+  content: "";
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--duration-fast) var(--ease-out);
+}
+.nav-link[aria-current="page"]::after { transform: scaleX(1); }
+
+.mobile-menu-panel {
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(-8px);
+  transition: opacity 200ms var(--ease-out), transform 200ms var(--ease-out), visibility 0s linear 200ms;
+}
+.mobile-menu-panel[data-state="open"] {
+  visibility: visible;
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0s;
+}
+.mobile-menu-panel[data-state="closed"] .mobile-menu-item {
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity 140ms var(--ease-out), transform 140ms var(--ease-out);
+}
+.mobile-menu-item {
+  opacity: 1;
+  transform: translateY(0);
+}
+.mobile-menu-panel[data-state="open"] .mobile-menu-item {
+  animation: menu-item-in 220ms var(--ease-out) both;
+  animation-delay: calc(var(--menu-index, 0) * 45ms);
+}
+@keyframes menu-item-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (min-width: 768px) {
+  .timeline-horizontal::before { display: block; }
+}
+
+@keyframes ambient-sweep {
+  from { transform: translate3d(-1.5%, 0, 0); }
+  to { transform: translate3d(1.5%, 0, 0); }
+}
+
+.page-enter {
+  animation: page-enter 250ms var(--ease-out) both;
+}
+
+@keyframes page-enter {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+[data-reveal-state="waiting"] {
+  opacity: 0;
+  transform: translateY(var(--reveal-y, 20px)) scale(0.98);
+}
+
+[data-reveal-state="shown"] {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transition: opacity var(--duration-enter) var(--ease-out) var(--reveal-delay, 0ms),
+    transform var(--duration-enter) var(--ease-out) var(--reveal-delay, 0ms);
+}
+
+.reveal-group[data-reveal-state="waiting"] > .reveal-item {
+  opacity: 0;
+  transform: translateY(18px) scale(0.98);
+}
+
+.reveal-group[data-reveal-state="shown"] > .reveal-item {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transition: opacity var(--duration-enter) var(--ease-out) var(--reveal-delay, 0ms),
+    transform var(--duration-enter) var(--ease-out) var(--reveal-delay, 0ms);
+}
+
 @keyframes phone-float {
   0%,
   100% {
@@ -75,6 +499,19 @@ img {
 
 .phone-float {
   animation: phone-float 6s ease-in-out infinite;
+}
+
+.phone-shell {
+  transform: perspective(1400px)
+    rotateX(calc(8deg + var(--phone-tilt-x, 0deg)))
+    rotateY(calc(-10deg + var(--phone-tilt-y, 0deg)));
+  transform-style: preserve-3d;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .phone-shell {
+    will-change: transform;
+  }
 }
 
 @media print {
@@ -104,5 +541,36 @@ img {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+
+  .page-enter,
+  .phone-float,
+  .atmosphere::before,
+  .atmosphere::after,
+  .live-dot {
+    animation: none !important;
+  }
+
+  [data-reveal-state="waiting"],
+  .reveal-group[data-reveal-state="waiting"] > .reveal-item {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .timeline[data-reveal-state="waiting"] .timeline-step {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .faq-answer-grid,
+  .faq-plus,
+  .timeline::before {
+    transition: none !important;
+  }
+
+  .mobile-menu-panel,
+  .mobile-menu-panel[data-state="open"] .mobile-menu-item {
+    animation: none !important;
+    transition: none !important;
   }
 }

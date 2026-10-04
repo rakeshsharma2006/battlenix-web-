@@ -3,6 +3,7 @@ import { Container } from "@/components/ui/Container";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { PLAY_STORE_URL } from "@/lib/constants";
 import { createPageMetadata } from "@/lib/metadata";
+import { RevealGroup } from "@/components/motion/RevealGroup";
 
 export const metadata = createPageMetadata({
   title: "BattleNix About",
@@ -17,7 +18,7 @@ export default function AboutPage() {
         <div className="max-w-4xl">
           <PageHeader eyebrow="About BattleNix" title="Competitive play, structured for teams." description="BattleNix is a mobile platform for structured tournaments, team competition, matches, and standings for BGMI and Free Fire." />
 
-          <div className="mt-10 grid gap-x-10 sm:grid-cols-2">
+          <RevealGroup className="mt-10 grid gap-x-10 sm:grid-cols-2">
             {[
               ["What We Build", "Tournament experiences that organize event details, registration, matches, and outcomes."],
               ["Tournament Experience", "Players can review event information and follow tournament progress in the app."],
@@ -30,7 +31,7 @@ export default function AboutPage() {
                 <p className="mt-2 text-sm leading-7 text-[#a1a1aa]">{copy}</p>
               </section>
             ))}
-          </div>
+          </RevealGroup>
 
           <div className="mt-4 flex flex-wrap gap-5 text-sm">
             <Link href="/how-it-works" className="min-h-11 text-white underline decoration-[#e5484d] underline-offset-4">

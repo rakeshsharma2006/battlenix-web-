@@ -9,6 +9,9 @@ import {
 import { FeatureCard } from "@/components/ui/FeatureCard";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { Reveal } from "@/components/motion/Reveal";
+import { RevealGroup } from "@/components/motion/RevealGroup";
+import { Atmosphere } from "@/components/motion/Atmosphere";
 
 const features = [
   {
@@ -49,24 +52,34 @@ function UsersIcon() {
 
 export function FeaturesSection() {
   return (
-    <section className="py-16 sm:py-20" aria-labelledby="features-heading">
-      <Container>
-        <SectionHeading
-          eyebrow="Why BattleNix"
-          title="A focused esports experience built around the games players actually queue for."
-          description="BattleNix keeps the experience direct: team registration, match visibility, and clear tournament updates without extra noise."
-        />
+    <section className="relative isolate overflow-clip py-16 sm:py-20" aria-labelledby="features-heading">
+      <Atmosphere variant="section" />
+      <Container className="relative">
+        <Reveal>
+          <SectionHeading
+            eyebrow="Why BattleNix"
+            title="A focused esports experience built around the games players actually queue for."
+            description="BattleNix keeps the experience direct: team registration, match visibility, and clear tournament updates without extra noise."
+          />
+        </Reveal>
 
-        <div className="mt-8 grid gap-x-8 sm:grid-cols-2 lg:grid-cols-3">
-          {features.map(({ icon, title, description }) => (
+        <RevealGroup className="mt-8 grid gap-4 sm:grid-cols-2">
+          {features.slice(0, 2).map(({ icon, title, description }, index) => (
             <FeatureCard
               key={title}
               icon={icon}
+              number={`0${index + 1}`}
               title={title}
               description={description}
+              featured
             />
           ))}
-        </div>
+        </RevealGroup>
+        <RevealGroup className="mt-4 grid gap-x-8 sm:grid-cols-2 xl:grid-cols-4">
+          {features.slice(2).map(({ icon, title, description }, index) => (
+            <FeatureCard key={title} icon={icon} number={`0${index + 3}`} title={title} description={description} />
+          ))}
+        </RevealGroup>
       </Container>
     </section>
   );

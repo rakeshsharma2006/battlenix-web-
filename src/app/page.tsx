@@ -4,9 +4,9 @@ import { Hero } from "@/components/sections/Hero";
 import { HowItWorks } from "@/components/sections/HowItWorks";
 import { TournamentSection } from "@/components/sections/TournamentSection";
 import { StatsCard } from "@/components/ui/StatsCard";
-import { Container } from "@/components/ui/Container";
 import { createPageMetadata } from "@/lib/metadata";
 import { SITE_URL } from "@/lib/constants";
+import { RevealGroup } from "@/components/motion/RevealGroup";
 
 export const metadata = createPageMetadata({
   title: "BattleNix — Competitive Esports Tournaments",
@@ -40,9 +40,9 @@ export default function HomePage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }} />
       <Hero />
       <section aria-label="Platform highlights" className="border-y border-[#26262c]">
-        <Container className="grid sm:grid-cols-2 lg:grid-cols-4">
+        <RevealGroup className="mx-auto grid w-full max-w-7xl px-4 sm:grid-cols-2 sm:px-6 lg:grid-cols-4 lg:px-8">
           {["Competitive Tournaments", "Real-Time Results", "Team-Based Events", "Secure Payment Flow"].map((label) => <StatsCard key={label} label={label} />)}
-        </Container>
+        </RevealGroup>
       </section>
       <HowItWorks />
       <FeaturesSection />

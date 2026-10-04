@@ -4,6 +4,8 @@ import { LastUpdated } from "@/components/legal/LastUpdated";
 import { LegalSection } from "@/components/legal/LegalSection";
 import { LegalToc } from "@/components/legal/LegalToc";
 import { SITE_URL } from "@/lib/constants";
+import { Atmosphere } from "@/components/motion/Atmosphere";
+import { Reveal } from "@/components/motion/Reveal";
 
 type LegalSectionItem = {
   id: string;
@@ -43,7 +45,8 @@ export function LegalPageLayout({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
-      <article id="top" className="legal-print mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 lg:px-8 print:max-w-none print:px-0">
+      <article id="top" className="legal-print relative isolate mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 lg:px-8 print:max-w-none print:px-0">
+        <Atmosphere variant="legal" />
         <nav aria-label="Breadcrumb" className="mb-6 text-sm text-zinc-400 print:hidden">
           <Link href="/" className="hover:text-white">
             Home
@@ -52,11 +55,11 @@ export function LegalPageLayout({
           <span aria-current="page" className="text-zinc-200">{crumbLabel}</span>
         </nav>
 
-        <header className="mb-8 max-w-3xl">
+        <Reveal as="header" className="mb-8 max-w-3xl">
           <h1 className="text-4xl font-black tracking-tight text-white sm:text-5xl">{title}</h1>
           <LastUpdated date={lastUpdated} />
           <p className="mt-4 text-base leading-7 text-zinc-300 sm:text-lg">{intro}</p>
-        </header>
+        </Reveal>
 
         <div className="lg:grid lg:grid-cols-[260px_minmax(0,1fr)] lg:gap-10">
           <aside className="mb-8 min-w-0 lg:mb-0 lg:pt-2 print:hidden">

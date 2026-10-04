@@ -1,4 +1,6 @@
 import type { ReactNode } from "react";
+import type { CSSProperties } from "react";
+import { Reveal } from "@/components/motion/Reveal";
 
 type TimelineStep = {
   number: string;
@@ -16,9 +18,9 @@ export function Timeline({ steps, layout = "horizontal" }: TimelineProps) {
   const vertical = layout === "vertical";
 
   return (
-    <ol className={vertical ? "relative space-y-0 border-l border-[#26262c] pl-7" : "grid gap-0 md:grid-cols-5"}>
-      {steps.map((step) => (
-        <li key={step.number} className={vertical ? "relative border-b border-[#26262c] py-5 last:border-b-0" : "min-w-0 border-t border-[#26262c] px-4 py-5 first:border-t-0 md:border-l md:border-t-0 md:first:border-l-0"}>
+    <Reveal as="ol" className={vertical ? "timeline timeline-vertical relative space-y-0 pl-7" : "timeline timeline-horizontal grid gap-0 md:grid-cols-5"} y={12}>
+      {steps.map((step, index) => (
+        <li key={step.number} style={{ "--reveal-delay": `${Math.min(index * 70, 400)}ms` } as CSSProperties} className={vertical ? "timeline-step relative border-b border-[#26262c] py-5 last:border-b-0" : "timeline-step min-w-0 border-t border-[#26262c] px-4 py-5 first:border-t-0 md:border-l md:border-t-0 md:first:border-l-0"}>
           <span className={vertical ? "absolute -left-[2.15rem] top-6 bg-[#0b0b0d] pr-2 font-display text-xl font-bold text-[#e5484d]" : "font-display text-3xl font-bold text-[#e5484d]"}>
             {step.number}
           </span>
@@ -27,6 +29,6 @@ export function Timeline({ steps, layout = "horizontal" }: TimelineProps) {
           <p className="mt-2 text-sm leading-6 text-[#a1a1aa]">{step.description}</p>
         </li>
       ))}
-    </ol>
+    </Reveal>
   );
 }

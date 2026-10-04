@@ -18,10 +18,10 @@ export function DesktopNavItems() {
             key={href}
             href={href}
             className={cn(
-              "rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+              "nav-link relative rounded-lg px-3 py-2 text-sm font-medium transition-colors duration-150",
               isActive
-                ? "bg-white/8 text-white ring-1 ring-white/10"
-                : "text-zinc-300 hover:bg-white/5 hover:text-white",
+                ? "text-white"
+                : "text-zinc-300 hover:text-white",
             )}
             aria-current={isActive ? "page" : undefined}
           >

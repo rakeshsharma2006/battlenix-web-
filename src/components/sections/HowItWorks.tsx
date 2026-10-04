@@ -8,6 +8,8 @@ import {
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Timeline } from "@/components/ui/Timeline";
+import { Reveal } from "@/components/motion/Reveal";
+import { Atmosphere } from "@/components/motion/Atmosphere";
 
 const steps = [
   {
@@ -44,13 +46,16 @@ const steps = [
 
 export function HowItWorks() {
   return (
-    <section className="py-16 sm:py-20" aria-labelledby="how-it-works-heading">
-      <Container>
-        <SectionHeading
-          eyebrow="How it works"
-          title="From team sign-up to tournament results."
-          description="A five-step overview of the player flow in BattleNix."
-        />
+    <section className="relative isolate overflow-clip py-16 sm:py-20" aria-labelledby="how-it-works-heading">
+      <Atmosphere variant="section" />
+      <Container className="relative">
+        <Reveal>
+          <SectionHeading
+            eyebrow="How it works"
+            title="From team sign-up to tournament results."
+            description="A five-step overview of the player flow in BattleNix."
+          />
+        </Reveal>
 
         <div className="mt-10"><Timeline steps={steps.map(({ number, icon: Icon, ...step }) => ({ ...step, number, icon: <Icon className="h-4 w-4" aria-hidden="true" /> }))} /></div>
       </Container>

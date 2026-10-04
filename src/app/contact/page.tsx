@@ -7,6 +7,7 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { CONTACT } from "@/lib/constants";
 import { createPageMetadata } from "@/lib/metadata";
 import { SITE_CONFIG } from "@/lib/site-config";
+import { RevealGroup } from "@/components/motion/RevealGroup";
 
 export const metadata = createPageMetadata({
   title: "BattleNix Contact",
@@ -62,11 +63,11 @@ export default function ContactPage() {
           </ul>
         </section>
         {availableChannels.length ? (
-          <div className="mt-8 grid min-w-0 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <RevealGroup className="mt-8 grid min-w-0 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {availableChannels.map((channel) => (
               <ContactCard key={channel.key} icon={channel.icon} label={channel.label} value={channel.value} description={channel.description} href={channel.href} />
             ))}
-          </div>
+          </RevealGroup>
         ) : (
           <div className="mt-8 border border-[#26262c] bg-[#131316] p-6">
             <h2 className="font-display text-xl font-semibold text-white">Use in-app support</h2>

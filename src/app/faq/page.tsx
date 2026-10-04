@@ -3,6 +3,7 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { Container } from "@/components/ui/Container";
 import { faqCategories } from "@/content/faq";
 import { createPageMetadata } from "@/lib/metadata";
+import { RevealGroup } from "@/components/motion/RevealGroup";
 
 export const metadata = createPageMetadata({
   title: "Frequently Asked Questions",
@@ -22,7 +23,7 @@ export default function FaqPage() {
             </a>
           ))}
         </nav>
-        <div className="mt-8 max-w-4xl">
+        <RevealGroup className="mt-8 max-w-4xl">
           {faqCategories.map(({ id, title, items }) => (
             <section key={id} id={id} className="scroll-mt-24 border-t border-[#26262c] py-6">
               <h2 className="font-display text-2xl font-semibold text-white">{title}</h2>
@@ -31,7 +32,7 @@ export default function FaqPage() {
               </div>
             </section>
           ))}
-        </div>
+        </RevealGroup>
       </Container>
     </section>
   );

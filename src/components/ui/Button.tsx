@@ -22,14 +22,14 @@ export function Button({
   rel,
 }: ButtonProps) {
   const baseClasses =
-    "inline-flex min-h-11 items-center justify-center gap-2 rounded-[10px] border px-5 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#e5484d] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0b0d]";
+    "button-link inline-flex min-h-11 items-center justify-center gap-2 rounded-[10px] border px-5 text-sm font-semibold transition-[background-color,border-color,box-shadow,transform] duration-150 ease-[var(--ease-out)] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#e5484d] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0b0d]";
 
   const variantClasses =
     variant === "primary"
-      ? "border-[#e5484d] bg-[#e5484d] text-white hover:bg-[#d63b43]"
+      ? "button-primary border-[#e5484d] bg-[#e5484d] text-white"
       : variant === "action"
-        ? "border-[#2f6bff] bg-[#2f6bff] text-white hover:bg-[#245be0]"
-        : "border-[#45454d] bg-transparent text-zinc-100 hover:border-zinc-300 hover:bg-white/5";
+        ? "button-action border-[#2f6bff] bg-[#2f6bff] text-white"
+        : "button-outline border-[#45454d] bg-[#131316]/80 text-zinc-100";
 
   return (
     <Link

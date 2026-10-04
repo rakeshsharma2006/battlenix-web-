@@ -6,6 +6,7 @@ import { APP_SCREENS } from "@/lib/app-screens";
 
 export function PhoneScene() {
   const phoneRef = useRef<HTMLDivElement>(null);
+  const phoneShellRef = useRef<HTMLDivElement>(null);
   const warnedScreens = useRef(new Set<string>());
   const [activeIndex, setActiveIndex] = useState(0);
   const [timerEpoch, setTimerEpoch] = useState(0);
@@ -133,6 +134,44 @@ export function PhoneScene() {
     return () => window.clearInterval(timer);
   }, [activeIndex, isIntersecting, isPageVisible, prefersReducedMotion, preloadedImages, timerEpoch]);
 
+  useEffect(() => {
+    const target = phoneRef.current;
+    const shell = phoneShellRef.current;
+    if (!target || !shell || !isIntersecting || prefersReducedMotion !== false) return undefined;
+    if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return undefined;
+
+    let animationFrame = 0;
+    let pointerX = 0;
+    let pointerY = 0;
+    const updateTilt = (event: PointerEvent) => {
+      pointerX = event.clientX;
+      pointerY = event.clientY;
+      if (animationFrame) return;
+      animationFrame = window.requestAnimationFrame(() => {
+        animationFrame = 0;
+        const bounds = shell.getBoundingClientRect();
+        const x = (pointerX - bounds.left) / bounds.width - 0.5;
+        const y = (pointerY - bounds.top) / bounds.height - 0.5;
+        shell.style.setProperty("--phone-tilt-x", `${-y * 3}deg`);
+        shell.style.setProperty("--phone-tilt-y", `${x * 3}deg`);
+      });
+    };
+    const resetTilt = () => {
+      if (animationFrame) window.cancelAnimationFrame(animationFrame);
+      animationFrame = 0;
+      shell.style.setProperty("--phone-tilt-x", "0deg");
+      shell.style.setProperty("--phone-tilt-y", "0deg");
+    };
+
+    target.addEventListener("pointermove", updateTilt);
+    target.addEventListener("pointerleave", resetTilt);
+    return () => {
+      target.removeEventListener("pointermove", updateTilt);
+      target.removeEventListener("pointerleave", resetTilt);
+      resetTilt();
+    };
+  }, [isIntersecting, prefersReducedMotion]);
+
   const handleImageError = (id: string) => {
     setFailedScreenIds((current) => new Set(current).add(id));
   };
@@ -141,7 +180,7 @@ export function PhoneScene() {
   return (
     <div ref={phoneRef} className="relative mx-auto w-full max-w-[420px]">
       <div className="relative mx-auto aspect-[9/17.5] w-full max-w-[360px] [perspective:1400px]">
-        <div className="phone-float absolute inset-0 rotate-x-[8deg] rotate-y-[-10deg] rounded-[2.75rem] border border-white/15 bg-[#071018] p-[0.7rem] [transform-style:preserve-3d] motion-safe:transition-transform motion-safe:duration-500 hover:rotate-x-[5deg] hover:rotate-y-[-6deg]">
+        <div ref={phoneShellRef} className="phone-shell phone-float absolute inset-0 rounded-[2.75rem] border border-white/15 bg-[#071018] p-[0.7rem]">
           <div className="relative h-full overflow-hidden rounded-[2.15rem] border border-white/10 bg-[#08111a]">
             <div className="absolute left-1/2 top-2 z-20 h-1.5 w-20 -translate-x-1/2 rounded-full bg-black/55" />
 
