@@ -1,84 +1,188 @@
 import Link from "next/link";
-import { ArrowRight, CalendarDays, Gamepad2, MapPin, Users } from "lucide-react";
-import type { Tournament } from "@/lib/demo-tournaments";
+import { ArrowRight, CalendarDays, Gamepad2, Users, Trophy } from "lucide-react";
+import type { PublicTournamentListItem } from "@/lib/tournaments";
+import {
+  formatCurrencyINR,
+  getStatusDisplay,
+  normalizeGameLabel,
+} from "@/lib/tournaments";
 
-const statusClasses: Record<Tournament["status"], string> = {
-  "Registration Open": "border-[#e5484d]/45 bg-[#0b0b0d]/80 text-[#ff777b]",
-  Upcoming: "border-white/15 bg-[#0b0b0d]/80 text-[#d4d4d8]",
-  Ongoing: "border-[#39c47c]/45 bg-[#0b0b0d]/80 text-[#39c47c]",
-  Completed: "border-white/10 bg-[#0b0b0d]/80 text-[#a1a1aa]",
-};
-
-export function TournamentCard({ tournament }: { tournament: Tournament }) {
-  const teamProgress = tournament.totalTeams > 0
-    ? Math.min(100, (tournament.registeredTeams / tournament.totalTeams) * 100)
-    : 0;
-
-  return (
-    <article className="tournament-card group min-w-0 overflow-hidden rounded-xl border border-[#26262c] bg-[#131316]">
-      <div
-        className={`tournament-banner tournament-banner--${tournament.game === "BGMI" ? "bgmi" : "freefire"} relative flex min-h-52 flex-col justify-between overflow-hidden p-5`}
-        data-game={tournament.game}
-      >
-        <div className="relative z-10 flex flex-wrap items-center justify-between gap-2">
-          <span className={`rounded-md px-2.5 py-1 text-xs font-semibold ${tournament.game === "BGMI" ? "bg-[#26394d] text-[#b9d5ef]" : "bg-[#49311d] text-[#f2c48d]"}`}>
-            {tournament.game}
-          </span>
-          <span className={`inline-flex items-center gap-2 rounded-md border px-2.5 py-1 text-xs font-medium ${statusClasses[tournament.status]}`}>
-            {tournament.status === "Ongoing" ? <span aria-hidden="true" className="live-dot h-1.5 w-1.5 rounded-full bg-[#39c47c]" /> : null}
-            {tournament.status}
-          </span>
-        </div>
-        <div className="relative z-10">
-          <p className="font-mono text-[11px] uppercase tracking-[0.12em] text-white/70">{tournament.mode} event</p>
-          <h2 className="mt-1 break-words font-display text-2xl font-semibold text-white">{tournament.title}</h2>
-        </div>
-      </div>
-
-      <div className="p-5">
-        <div className="flex flex-wrap items-end justify-between gap-3 border-b border-[#26262c] pb-4">
-          <div>
-            <p className="text-xs font-medium uppercase tracking-[0.1em] text-[#a1a1aa]">Prize pool</p>
-            <p className="mt-1 break-words font-display text-3xl font-bold text-[#e5484d]">{tournament.prizePool}</p>
-          </div>
-          <div className="pb-1 text-right">
-            <p className="text-xs text-[#71717a]">Entry fee</p>
-            <p className="mt-1 font-semibold text-white">{tournament.entryFee}</p>
-          </div>
-        </div>
-
-        <dl className="mt-4 grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
-          <Info icon={<Gamepad2 aria-hidden="true" />} label="Format" value={tournament.mode} />
-          <Info icon={<MapPin aria-hidden="true" />} label="Map" value={tournament.map} />
-          <Info icon={<CalendarDays aria-hidden="true" />} label="Date" value={new Date(tournament.date).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" })} />
-          <Info icon={<Users aria-hidden="true" />} label="Teams" value={`${tournament.registeredTeams} / ${tournament.totalTeams}`} />
-        </dl>
-
-        <div className="mt-4" aria-label={`${tournament.registeredTeams} of ${tournament.totalTeams} sample teams registered`}>
-          <div className="h-1 overflow-hidden rounded-full bg-[#26262c]">
-            <div className="h-full rounded-full bg-[#e5484d]" style={{ width: `${teamProgress}%` }} />
-          </div>
-        </div>
-
-        <Link
-          href={`/tournaments/${tournament.slug}`}
-          className="card-cta mt-4 inline-flex min-h-11 items-center gap-2 rounded-md text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#e5484d]"
-        >
-          View Tournament <ArrowRight aria-hidden="true" className="card-cta-arrow h-4 w-4" />
-        </Link>
-      </div>
-    </article>
-  );
+interface TournamentCardProps {
+  tournament: PublicTournamentListItem;
 }
 
-function Info({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
+export function TournamentCard({ tournament }: TournamentCardProps) {
+  const isBgmi = (tournament.game || "").toUpperCase().includes("BGMI");
+  const gameLabel = normalizeGameLabel(tournament.game);
+  const statusInfo = getStatusDisplay(tournament.status);
+
+  const teamProgress =
+    tournament.maxTeams > 0
+      ? Math.min(100, (tournament.registeredCount / tournament.maxTeams) * 100)
+      : 0;
+
+  const formattedDate = tournament.tournamentStart
+    ? new Date(tournament.tournamentStart).toLocaleDateString("en-IN", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+        timeZone: "UTC",
+      })
+    : "TBA";
+
+  const entryFeeDisplay =
+    tournament.entryFee === 0 ? "FREE" : formatCurrencyINR(tournament.entryFee);
+
   return (
-    <div className="flex min-w-0 items-start gap-2">
-      <span className="mt-0.5 shrink-0 text-[#71717a]">{icon}</span>
-      <div className="min-w-0">
-        <dt className="text-xs text-[#71717a]">{label}</dt>
-        <dd className="mt-0.5 break-words text-sm font-medium text-[#f4f4f5]">{value}</dd>
+    <article
+      id={`tournament-card-${tournament.id}`}
+      className="group relative flex flex-col overflow-hidden rounded-xl border border-[#26262c] bg-[#131316] transition-all duration-300 hover:border-[#e5484d]/50 hover:shadow-[0_8px_30px_rgba(229,72,77,0.12)]"
+    >
+      {/* Banner / Header Visual */}
+      <div
+        className={`relative flex min-h-48 flex-col justify-between overflow-hidden p-5 transition-all ${
+          isBgmi
+            ? "bg-gradient-to-br from-[#121c29] via-[#0f141d] to-[#131316]"
+            : "bg-gradient-to-br from-[#2a170d] via-[#1a120c] to-[#131316]"
+        }`}
+      >
+        {/* Cloudinary banner background if available */}
+        {tournament.banner ? (
+          <>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={tournament.banner}
+              alt={tournament.title}
+              loading="lazy"
+              className="absolute inset-0 h-full w-full object-cover opacity-25 transition-transform duration-500 group-hover:scale-105"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#131316] via-transparent to-black/60" />
+          </>
+        ) : (
+          <div
+            className={`absolute -right-8 -top-8 h-40 w-40 rounded-full blur-3xl opacity-20 ${
+              isBgmi ? "bg-sky-500" : "bg-orange-500"
+            }`}
+          />
+        )}
+
+        {/* Top Badges */}
+        <div className="relative z-10 flex flex-wrap items-center justify-between gap-2">
+          <span
+            className={`inline-flex items-center rounded-md px-2.5 py-1 text-xs font-semibold tracking-wide ${
+              isBgmi ? "bg-[#26394d] text-[#b9d5ef]" : "bg-[#49311d] text-[#f2c48d]"
+            }`}
+          >
+            {gameLabel}
+          </span>
+          <span
+            className={`inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-xs font-medium backdrop-blur-sm ${statusInfo.badgeClass}`}
+          >
+            {statusInfo.dotColor ? (
+              <span
+                aria-hidden="true"
+                className="h-1.5 w-1.5 rounded-full animate-pulse"
+                style={{ backgroundColor: statusInfo.dotColor }}
+              />
+            ) : null}
+            {statusInfo.label}
+          </span>
+        </div>
+
+        {/* Title & Mode */}
+        <div className="relative z-10 mt-6">
+          <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-white/70">
+            {tournament.mode || "Squad"} Tournament
+          </p>
+          <h2 className="mt-1 line-clamp-2 break-words font-display text-2xl font-bold text-white transition-colors group-hover:text-[#ff777b]">
+            {tournament.title}
+          </h2>
+        </div>
       </div>
-    </div>
+
+      {/* Card Body */}
+      <div className="flex flex-1 flex-col p-5">
+        {/* Prize & Entry Fee */}
+        <div className="flex flex-wrap items-end justify-between gap-3 border-b border-[#26262c] pb-4">
+          <div>
+            <p className="flex items-center gap-1 text-xs font-medium uppercase tracking-[0.1em] text-[#a1a1aa]">
+              <Trophy className="h-3.5 w-3.5 text-[#e5484d]" aria-hidden="true" />
+              Prize Pool
+            </p>
+            <p className="mt-1 font-display text-3xl font-bold tracking-tight text-[#e5484d]">
+              {formatCurrencyINR(tournament.prizePool)}
+            </p>
+          </div>
+          <div className="pb-1 text-right">
+            <p className="text-xs text-[#71717a]">Entry Fee</p>
+            <p className="mt-1 text-base font-semibold text-white">{entryFeeDisplay}</p>
+          </div>
+        </div>
+
+        {/* Meta Grid */}
+        <dl className="mt-4 grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
+          <div className="flex min-w-0 items-start gap-2">
+            <Gamepad2 aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-[#71717a]" />
+            <div className="min-w-0">
+              <dt className="text-xs text-[#71717a]">Format</dt>
+              <dd className="mt-0.5 truncate text-sm font-medium text-[#f4f4f5]">
+                {tournament.mode || "Squad"}
+              </dd>
+            </div>
+          </div>
+
+          <div className="flex min-w-0 items-start gap-2">
+            <CalendarDays aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-[#71717a]" />
+            <div className="min-w-0">
+              <dt className="text-xs text-[#71717a]">Starts</dt>
+              <dd className="mt-0.5 truncate text-sm font-medium text-[#f4f4f5]">
+                {formattedDate}
+              </dd>
+            </div>
+          </div>
+
+          <div className="col-span-2 flex min-w-0 items-start gap-2">
+            <Users aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-[#71717a]" />
+            <div className="min-w-0 flex-1">
+              <dt className="flex items-center justify-between text-xs text-[#71717a]">
+                <span>Registered Teams</span>
+                <span className="font-mono text-zinc-300">
+                  {tournament.registeredCount} / {tournament.maxTeams}
+                </span>
+              </dt>
+              <dd className="mt-1.5">
+                <div
+                  className="h-1.5 w-full overflow-hidden rounded-full bg-[#26262c]"
+                  role="progressbar"
+                  aria-valuenow={tournament.registeredCount}
+                  aria-valuemin={0}
+                  aria-valuemax={tournament.maxTeams}
+                >
+                  <div
+                    className="h-full rounded-full bg-gradient-to-r from-[#e5484d] to-[#ff777b] transition-all duration-300"
+                    style={{ width: `${teamProgress}%` }}
+                  />
+                </div>
+              </dd>
+            </div>
+          </div>
+        </dl>
+
+        {/* CTA */}
+        <div className="mt-auto pt-5">
+          <Link
+            id={`view-tournament-btn-${tournament.id}`}
+            href={`/tournaments/${tournament.id}`}
+            className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg border border-[#303038] bg-[#1a1a1f] px-4 py-2.5 text-sm font-semibold text-white transition-all hover:border-[#e5484d] hover:bg-[#e5484d] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#e5484d]"
+          >
+            <span>View Tournament</span>
+            <ArrowRight
+              aria-hidden="true"
+              className="h-4 w-4 transition-transform group-hover:translate-x-1"
+            />
+          </Link>
+        </div>
+      </div>
+    </article>
   );
 }

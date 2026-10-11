@@ -8,7 +8,6 @@ const routes = Array.from(new Set([
   ...FOOTER_LINKS.support.map(({ href }) => href),
   ...FOOTER_LINKS.legal.map(({ href }) => href),
   ...MOBILE_EXTRA_LINKS.map(({ href }) => href),
-  "/tournaments/demo-erangel-elite-cup",
 ]));
 
 export default function sitemap(): MetadataRoute.Sitemap {
