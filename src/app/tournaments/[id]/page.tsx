@@ -12,12 +12,15 @@ import {
   Info as InfoIcon,
   Layers,
   ArrowLeft,
+  Swords,
+  Zap,
 } from "lucide-react";
 import { Container } from "@/components/ui/Container";
-import { fetchPublicTournamentById } from "@/lib/api";
+import { fetchPublicTournamentById, fetchPublicTournamentMatches } from "@/lib/api";
 import {
   formatCurrencyINR,
   getStatusDisplay,
+  getMatchStatusDisplay,
   normalizeGameLabel,
 } from "@/lib/tournaments";
 import { PLAY_STORE_URL, SITE_URL } from "@/lib/constants";
@@ -78,7 +81,10 @@ export async function generateMetadata({ params }: TournamentPageProps): Promise
 
 export default async function TournamentDetailPage({ params }: TournamentPageProps) {
   const { id } = await params;
-  const { tournament, status } = await fetchPublicTournamentById(id);
+  const [{ tournament, status }, matches] = await Promise.all([
+    fetchPublicTournamentById(id),
+    fetchPublicTournamentMatches(id),
+  ]);
 
   if (!tournament) {
     if (status === 404 || status === 400) {
@@ -377,6 +383,69 @@ export default async function TournamentDetailPage({ params }: TournamentPagePro
                       </div>
                     </div>
                   ))}
+                </div>
+              </section>
+            )}
+
+            {/* MATCHES SECTION */}
+            {matches.length > 0 && (
+              <section
+                id="tournament-matches"
+                className="rounded-xl border border-[#26262c] bg-[#131316] p-6"
+              >
+                <h2 className="flex items-center gap-2 font-display text-2xl font-bold text-white">
+                  <Swords className="h-5 w-5 text-[#e5484d]" />
+                  Matches
+                </h2>
+                <p className="mt-1 text-sm text-[#a1a1aa]">
+                  All scheduled and completed matches for this tournament.
+                </p>
+
+                <div className="mt-6 space-y-2">
+                  {matches.map((match) => {
+                    const mStatus = getMatchStatusDisplay(match.status);
+                    return (
+                      <Link
+                        key={match._id}
+                        href={`/tournaments/${id}/matches/${match._id}`}
+                        className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-[#202026] bg-[#18181c] px-4 py-3 text-sm transition-colors hover:border-[#3a3a45] hover:bg-[#1f1f26] group"
+                      >
+                        <div className="flex items-center gap-3 min-w-0">
+                          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-[#26262c] font-mono text-xs font-bold text-white">
+                            {match.matchNumber}
+                          </span>
+                          <div className="min-w-0">
+                            <p className="font-semibold text-white group-hover:text-[#e5484d] transition-colors">
+                              Match #{match.matchNumber}
+                            </p>
+                            <p className="truncate text-xs text-[#a1a1aa]">
+                              Stage {match.stageNumber} &middot; {match.map || "Map TBA"}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          {match.status === "COMPLETED" && (
+                            <span className="flex items-center gap-1 text-xs text-emerald-400">
+                              <Zap className="h-3 w-3" /> Results
+                            </span>
+                          )}
+                          <span
+                            className={`inline-flex items-center gap-1 rounded-md border px-2.5 py-1 text-xs font-medium ${mStatus.badgeClass}`}
+                          >
+                            {mStatus.dotColor && (
+                              <span
+                                aria-hidden="true"
+                                className="h-1.5 w-1.5 animate-pulse rounded-full"
+                                style={{ backgroundColor: mStatus.dotColor }}
+                              />
+                            )}
+                            {mStatus.label}
+                          </span>
+                          <ChevronRight className="h-4 w-4 text-[#71717a] shrink-0" />
+                        </div>
+                      </Link>
+                    );
+                  })}
                 </div>
               </section>
             )}

@@ -132,3 +132,84 @@ export function getStatusDisplay(status: string): UIStatus {
       };
   }
 }
+
+export type PublicMatchStanding = {
+  rank: number;
+  teamId: string;
+  teamName: string;
+  teamTag: string | null;
+  teamLogo: string | null;
+  kills: number;
+  placementPoints: number;
+  totalPoints: number;
+};
+
+export type PublicMatchDetail = {
+  id: string;
+  tournamentId: string;
+  tournamentTitle: string;
+  game: string;
+  mode: string;
+  stageNumber: number;
+  stageName: string;
+  groupNumber: number;
+  groupName: string;
+  matchNumber: number;
+  map: string;
+  scheduledAt: string | null;
+  status: string; // 'SCHEDULED' | 'CHECKIN' | 'LIVE' | 'COMPLETED' | 'CANCELLED'
+  isCompleted: boolean;
+  standings: PublicMatchStanding[];
+};
+
+export type PublicMatchDetailResponse = {
+  success: boolean;
+  data: PublicMatchDetail;
+};
+
+export type PublicTournamentMatchSummary = {
+  _id: string;
+  tournamentId: string;
+  groupId: string;
+  stageNumber: number;
+  matchNumber: number;
+  map: string;
+  scheduledAt: string;
+  status: string;
+  roomPublished: boolean;
+  publishedAt: string | null;
+};
+
+export function getMatchStatusDisplay(status: string): UIStatus {
+  switch (status?.toUpperCase()) {
+    case "LIVE":
+      return {
+        label: "LIVE MATCH",
+        badgeClass: "border-[#39c47c]/40 bg-[#0b0b0d]/90 text-[#39c47c]",
+        dotColor: "#39c47c",
+      };
+    case "CHECKIN":
+      return {
+        label: "CHECK-IN OPEN",
+        badgeClass: "border-amber-500/30 bg-[#0b0b0d]/90 text-amber-300",
+        dotColor: "#f59e0b",
+      };
+    case "COMPLETED":
+      return {
+        label: "COMPLETED",
+        badgeClass: "border-white/15 bg-[#0b0b0d]/90 text-[#a1a1aa]",
+      };
+    case "CANCELLED":
+      return {
+        label: "CANCELLED",
+        badgeClass: "border-red-900/40 bg-[#0b0b0d]/90 text-red-400",
+      };
+    case "SCHEDULED":
+    default:
+      return {
+        label: "SCHEDULED",
+        badgeClass: "border-white/15 bg-[#0b0b0d]/90 text-[#d4d4d8]",
+      };
+  }
+}
+
